@@ -8,16 +8,20 @@ public class App extends JFrame {
     Container contentPane;
     private JButton clickButton;
     private JPanel panel1;
-    private JButton button1;
+    private JButton jbt_save = new JButton("저장");
     JLabel imageLabel = new JLabel();
+    JComboBox<String> changeToData;
+    String data[] = {"pdf","html"};
+    String filePath = "";
+    String fileChangeChk = "";
 
     Font font = new Font("Aharoni 굵게", Font.BOLD, 15);
 
     App(){
         setTitle("Menu와 JFileChooser 활용 예제");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        contentPane = getContentPane();
-        contentPane.add(imageLabel);
+        //contentPane = getContentPane();
+        //contentPane.add(imageLabel);
         createMenu();
         createMain();
         setSize(300,200);
@@ -38,9 +42,51 @@ public class App extends JFrame {
     }
 
     void createMain(){
-        JPanel mb = new JPanel();
-        mb.add(panel1);
-        //System.out.println("통과함");
+
+        getContentPane().setLayout(new BorderLayout(10,10));
+
+        changeToData = new JComboBox<String>(data);
+
+        add(changeToData, BorderLayout.NORTH);
+
+        add(imageLabel,BorderLayout.CENTER);
+
+        // 버튼 색을 추가
+        jbt_save.setBackground(Color.BLACK);
+        jbt_save.setForeground(Color.white);
+        jbt_save.setFont(font);
+        add(jbt_save, BorderLayout.SOUTH);
+        jbt_save.addActionListener(new SaveActionListener());
+        changeToData.addActionListener(new choiseActionListener());
+
+    }
+
+    class SaveActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //저장경로 체크
+            if(!filePath.equals("")) {
+                if(fileChangeChk=="html") {
+
+                    System.out.println(filePath + " :: html click");
+                }else{
+                    System.out.println(filePath + " :: pdf click");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+    }
+
+    class choiseActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //선택한 아이템 박스
+            fileChangeChk = changeToData.getSelectedItem().toString();
+        }
     }
 
     // Open 메뉴아이템이 선택되면 호출되는 Action 리스너
@@ -66,7 +112,7 @@ public class App extends JFrame {
             }
 
             // 사용자가 파일을 선택하고 "열기" 버튼을 누른 경우
-            String filePath = chooser.getSelectedFile().getPath(); // 파일 경로명을 알아온다.
+            filePath = chooser.getSelectedFile().getPath(); // 파일 경로명을 알아온다.
             String fileName = chooser.getSelectedFile().getName();
             //imageLabel.setIcon(new ImageIcon(filePath)); // 파일을 로딩하여 이미지 레이블에 출력한다.
             imageLabel.setText(fileName);
